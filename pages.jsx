@@ -74,11 +74,11 @@ function usePageMeta({ title, description }) {
 // ─── Global Video Background ──────────────────────────────────────
 
 const VIDEO_BY_ROUTE = {
-  '/':                 'videos/hero-bg',
-  '/pacotes':          'videos/hero-bg-alt',
-  '/monte-seu-pacote': 'videos/visto-loop',
-  '/sobre':            'videos/fans-loop',
-  '/visto':            'videos/visto-loop'
+  '/':                 'hero-bg',
+  '/pacotes':          'hero-bg-alt',
+  '/monte-seu-pacote': 'uploads/visto-loop',
+  '/sobre':            'fans-loop',
+  '/visto':            'uploads/visto-loop'
 };
 
 const GlobalVideoBackground = () => {
