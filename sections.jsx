@@ -286,6 +286,37 @@ const PacoteCard = ({ p, delay, installments }) => {
             <div className="install">
               ou <b>{installments}× de {fmtBRL(Math.round(p.preco / installments))}</b> sem juros
             </div>
+            <div className="pkg-cards-accepted">
+              <div className="pkg-card-flag pkg-card-flag-visa" aria-label="Visa">
+                <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+                  <text x="100" y="62" fontFamily="Arial Black, sans-serif" fontStyle="italic" fontWeight="900" fontSize="60" fill="#1A1F71" textAnchor="middle" letterSpacing="-2">VISA</text>
+                </svg>
+              </div>
+              <div className="pkg-card-flag pkg-card-flag-master" aria-label="Mastercard">
+                <svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="38" cy="30" r="22" fill="#EB001B"/>
+                  <circle cx="62" cy="30" r="22" fill="#F79E1B"/>
+                  <path d="M 50 11.6 A 22 22 0 0 1 50 48.4 A 22 22 0 0 0 50 11.6 Z" fill="#FF5F00"/>
+                </svg>
+              </div>
+              <div className="pkg-card-flag pkg-card-flag-amex" aria-label="American Express">
+                <svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="100" height="60" fill="#006FCF"/>
+                  <text x="50" y="26" fontFamily="Arial Black, sans-serif" fontWeight="900" fontSize="13" fill="white" textAnchor="middle">AMERICAN</text>
+                  <text x="50" y="45" fontFamily="Arial Black, sans-serif" fontWeight="900" fontSize="13" fill="white" textAnchor="middle">EXPRESS</text>
+                </svg>
+              </div>
+              <div className="pkg-card-flag pkg-card-flag-pix" aria-label="Pix">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                  <g fill="#32BCAD">
+                    <path d="M 50 8 L 27 31 L 50 46 L 73 31 Z"/>
+                    <path d="M 92 50 L 69 27 L 54 50 L 69 73 Z"/>
+                    <path d="M 50 92 L 73 69 L 50 54 L 27 69 Z"/>
+                    <path d="M 8 50 L 31 73 L 46 50 L 31 27 Z"/>
+                  </g>
+                </svg>
+              </div>
+            </div>
           </div>
           <button className="btn-wa-pkg" onClick={onSolicitar} type="button">
             <Icon name="whatsapp" size={14} />

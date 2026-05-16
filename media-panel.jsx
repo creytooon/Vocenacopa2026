@@ -30,6 +30,7 @@ function noteMediaFilled(id, filled) {
 // Quando vazio: fica transparente, deixando passar o conteúdo de baixo.
 // Quando preenchido: mostra a imagem dropada cobrindo tudo.
 function MediaSlot({ id, label, group, anchor, shape = "rect", placeholder, style, className = "" }) {
+  if (!window.__VNC_ADMIN_MODE) return null;
   const ref = React.useRef(null);
 
   React.useEffect(() => {
