@@ -488,7 +488,7 @@ const CTAStrip = ({ brand, installments = 18 }) => {
         <Reveal>
           <span className="eyebrow"><span className="dot"></span>Roteiro sob medida</span>
           <h2 style={{marginTop: 14}}>Não encontrou<br/>o pacote <em>ideal</em>?</h2>
-          <p className="lede">Algo fora do padrão? Manda no WhatsApp — proposta em 48h, em até <b style={{color:"var(--gold)"}}>{installments}× sem juros</b>.</p>
+          <p className="lede">Algo fora do padrão? Manda no WhatsApp — proposta em 3h, em até <b style={{color:"var(--gold)"}}>{installments}× sem juros</b>.</p>
           <div style={{marginTop: 28, display:"flex", gap: 12, flexWrap:"wrap"}}>
             <a href={waLink(msg)} target="_blank" rel="noopener" className="btn btn-wa">
               <Icon name="whatsapp" size={20}/> Falar com um especialista

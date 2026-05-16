@@ -84,7 +84,17 @@ const VIDEO_BY_ROUTE = {
 const GlobalVideoBackground = () => {
   const path = useRoute();
   const src = VIDEO_BY_ROUTE[path] || 'hero-bg';
-  const isMobile = !!window.__IS_MOBILE;
+
+  // Detecção reativa de mobile — atualiza em resize / orientação
+  const [isMobile, setIsMobile] = React.useState(
+    () => window.matchMedia('(max-width: 768px)').matches
+  );
+  React.useEffect(() => {
+    const mql = window.matchMedia('(max-width: 768px)');
+    const fn = (e) => setIsMobile(e.matches);
+    mql.addEventListener('change', fn);
+    return () => mql.removeEventListener('change', fn);
+  }, []);
 
   const [activeIdx, setActiveIdx] = React.useState(0);
   const [srcs, setSrcs] = React.useState([src, null]);
@@ -92,6 +102,15 @@ const GlobalVideoBackground = () => {
   // Ref síncrona para evitar stale closure no activeIdx
   const activeIdxRef = React.useRef(0);
 
+  // Ao trocar mobile ↔ desktop, reinicia estado do crossfade
+  React.useEffect(() => {
+    setSrcs([src, null]);
+    setActiveIdx(0);
+    activeIdxRef.current = 0;
+    lastSrc.current = src;
+  }, [isMobile]);
+
+  // Troca de rota — crossfade no desktop, direto no mobile
   React.useEffect(() => {
     if (src === lastSrc.current) return;
     lastSrc.current = src;
@@ -112,6 +131,19 @@ const GlobalVideoBackground = () => {
     }, 100);
     return () => clearTimeout(timer);
   }, [src]);
+
+  // Mobile: div simples com background-image — sem VideoBackground,
+  // sem overlay duplo, sem carregamento de vídeo.
+  if (isMobile) {
+    return (
+      <div className="global-bg" aria-hidden="true">
+        <div className="global-bg-mobile-poster"
+             style={{ backgroundImage: `url(${src}-poster.jpg)` }}>
+        </div>
+        <div className="global-bg-overlay"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="global-bg" aria-hidden="true">
@@ -269,7 +301,7 @@ const MonteSeuPacoteCard = () => (
             </div>
             <div className="msp-hint">
               <span className="msp-dot"></span>
-              Proposta personalizada em até 48h
+              Proposta personalizada em até 3h
             </div>
           </div>
           <div className="msp-action">
