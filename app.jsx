@@ -19,6 +19,18 @@ const HEADLINE_VARIANTS = {
   "vestir": { label: "Vestir a camisa" }
 };
 
+// fallback: garante acesso ao hook de rota independente da ordem de carregamento
+const useRoute = window.useRoute || function useRoute() {
+  function _hp(h) { if (!h||h==='#'||h==='#/') return '/'; return h.startsWith('#/')?h.slice(1):'/'; }
+  const [path, setPath] = React.useState(() => _hp(window.location.hash));
+  React.useEffect(() => {
+    const handler = () => setPath(_hp(window.location.hash));
+    window.addEventListener('hashchange', handler);
+    return () => window.removeEventListener('hashchange', handler);
+  }, []);
+  return path;
+};
+
 function App() {
   const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
   const [highlightMedia, setHighlightMedia] = React.useState(false);

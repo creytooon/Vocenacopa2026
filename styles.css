@@ -4270,6 +4270,14 @@ image-slot.just-targeted::part(frame) {
 /* O overlay do hero/subhero escurece a área do banner */
 .subhero { background: transparent; }
 
+/* SubHero overlay: começa e termina semi-transparente — sem hard edge top/bottom */
+.subhero .hero-overlay {
+  background: linear-gradient(180deg,
+    rgba(10,10,15,0)    0%,
+    rgba(10,10,15,0.35) 30%,
+    rgba(10,10,15,0.50) 100%);
+}
+
 /* ══════════════════════════════════════════════════════════════
    MONTE SEU PACOTE CARD · card de destaque na home
    ══════════════════════════════════════════════════════════════ */
