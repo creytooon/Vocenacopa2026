@@ -42,7 +42,7 @@ function App() {
     document.body.dataset.mediaHighlight = highlightMedia ? "on" : "off";
   }, [highlightMedia]);
 
-  const subline = `Voos, hotéis 5★, ingressos e WhatsApp humano. Do grupo à final, do seu jeito.`;
+  const subline = `A maior Copa da história te espera. Ingressos garantidos, hotéis premium e atendimento humano no WhatsApp.`;
   const headline2 = HEADLINE_VARIANTS[t.headline2Variant]?.label || "Entrar em campo";
 
   if (window.__VNC_ADMIN_MODE && !authed) {
@@ -60,7 +60,7 @@ function App() {
   const renderPage = () => {
     if (path.startsWith('/monte-seu-pacote')) return <MonteSeuPacotePage key="monte"   {...pageProps} />;
     if (path.startsWith('/pacotes'))          return <PacotesPage         key="pacotes" {...pageProps} />;
-    if (path.startsWith('/visto'))            return <VistoPage            key="visto"  />;
+    if (path.startsWith('/visto'))            return <VistoPage            key="visto"  {...pageProps} />;
     if (path.startsWith('/sobre'))            return <SobrePage            key="sobre"  {...pageProps} />;
     return <HomePage key="home" {...pageProps} />;
   };

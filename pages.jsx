@@ -76,7 +76,7 @@ function usePageMeta({ title, description }) {
 const VIDEO_BY_ROUTE = {
   '/':                 'hero-bg',
   '/pacotes':          'hero-bg-alt',
-  '/monte-seu-pacote': 'uploads/visto-loop',
+  '/monte-seu-pacote': 'hero-bg-alt',
   '/sobre':            'fans-loop',
   '/visto':            'uploads/visto-loop'
 };
@@ -150,6 +150,7 @@ const PageNav = ({ brand }) => {
       <nav className="hero-navlinks">
         <AppLink to="/pacotes">Pacotes</AppLink>
         <AppLink to="/monte-seu-pacote">Monte seu pacote</AppLink>
+        <AppLink to="/visto">Visto</AppLink>
         <AppLink to="/sobre">Sobre</AppLink>
       </nav>
       <a href={waLink("Olá! Quero saber mais sobre os pacotes da Copa 2026.")}
@@ -236,6 +237,36 @@ const MonteSeuPacoteCard = () => (
             <span className="eyebrow msp-eyebrow"><span className="dot"></span>PERSONALIZE 100%</span>
             <h2 className="msp-title">Monte seu<br/><span className="gold-grad">pacote</span></h2>
             <p className="msp-sub">Escolha jogos, cidades, hotéis e voos. Cuidamos do visto também.</p>
+            <div className="msp-options">
+              <div className="msp-opt">
+                <span className="msp-opt-icon">✈️</span>
+                <div className="msp-opt-text">
+                  <div className="msp-opt-label">Voos</div>
+                  <div className="msp-opt-value">Econômica · Executiva · 1ª Classe</div>
+                </div>
+              </div>
+              <div className="msp-opt">
+                <span className="msp-opt-icon">🏨</span>
+                <div className="msp-opt-text">
+                  <div className="msp-opt-label">Hotéis</div>
+                  <div className="msp-opt-value">3★ · 4★ · 5★ premium</div>
+                </div>
+              </div>
+              <div className="msp-opt">
+                <span className="msp-opt-icon">🎟️</span>
+                <div className="msp-opt-text">
+                  <div className="msp-opt-label">Ingressos</div>
+                  <div className="msp-opt-value">Categoria 1, 2 ou 3</div>
+                </div>
+              </div>
+              <div className="msp-opt">
+                <span className="msp-opt-icon">🛂</span>
+                <div className="msp-opt-text">
+                  <div className="msp-opt-label">Visto</div>
+                  <div className="msp-opt-value">Assessoria completa</div>
+                </div>
+              </div>
+            </div>
             <div className="msp-hint">
               <span className="msp-dot"></span>
               Proposta personalizada em até 48h
@@ -262,7 +293,7 @@ const HomePage = ({ brand, headline2, subline, installments, heroVariant }) => {
   });
   React.useEffect(() => { window.scrollTo(0, 0); }, []);
   return (
-    <>
+    <div className="home-page">
       <Hero
         brand={brand}
         subline={subline}
@@ -272,9 +303,8 @@ const HomePage = ({ brand, headline2, subline, installments, heroVariant }) => {
       />
       <PacotesDestaque installments={installments} />
       <MonteSeuPacoteCard />
-      <CTAStrip brand={brand} installments={installments} />
       <Footer brand={brand} />
-    </>
+    </div>
   );
 };
 
@@ -318,18 +348,33 @@ const MonteSeuPacotePage = ({ brand, installments }) => {
         subtitle="Escolha jogos, cidades, hotéis e voos. Cuidamos do visto também."
       />
       <Builder brand={brand} />
-      <VisaSection />
       <CTAStrip brand={brand} installments={installments} />
       <Footer brand={brand} />
     </>
   );
 };
 
-// ─── VISTO PAGE · redirect para /monte-seu-pacote ─────────────────
+// ─── VISTO PAGE ───────────────────────────────────────────────────
 
-const VistoPage = () => {
-  React.useEffect(() => { navigateTo('/monte-seu-pacote'); }, []);
-  return null;
+const VistoPage = ({ brand, installments }) => {
+  usePageMeta({
+    title: 'Assessoria de Visto para a Copa 2026 — EUA e Canadá | Você na Copa',
+    description: 'Cuidamos do visto para você. EUA e Canadá. Aprovação garantida ou devolvemos a taxa.'
+  });
+  usePageScroll();
+  return (
+    <>
+      <SubHero
+        brand={brand}
+        eyebrow="Diferencial exclusivo"
+        title="Assessoria de Visto"
+        subtitle="EUA e Canadá. A gente resolve tudo, você só vai à entrevista."
+      />
+      <VisaSection />
+      <CTAStrip brand={brand} installments={installments} />
+      <Footer brand={brand} />
+    </>
+  );
 };
 
 // ─── SOBRE PAGE ───────────────────────────────────────────────────

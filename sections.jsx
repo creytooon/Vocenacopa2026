@@ -488,6 +488,38 @@ const CTAStrip = ({ brand, installments = 18 }) => {
   );
 };
 
+// ─── CARIMBO · animação passaporte BR sendo carimbado ────────────
+const CarimboAnimacao = () => (
+  <div className="carimbo-wrap">
+    <div className="carimbo-passaporte">
+      <svg viewBox="0 0 100 100" className="carimbo-brasao" aria-hidden="true">
+        <circle cx="50" cy="50" r="40" fill="none" stroke="var(--gold)" strokeWidth="2"/>
+        <circle cx="50" cy="50" r="33" fill="none" stroke="var(--gold)" strokeWidth="0.8" strokeDasharray="4 3"/>
+        <text x="50" y="36" textAnchor="middle" fill="var(--gold)" fontSize="7.5" fontWeight="700" letterSpacing="1">REPÚBLICA</text>
+        <text x="50" y="46" textAnchor="middle" fill="var(--gold)" fontSize="7.5" fontWeight="700" letterSpacing="1">FEDERATIVA</text>
+        <text x="50" y="58" textAnchor="middle" fill="var(--gold)" fontSize="12" fontWeight="900">BRASIL</text>
+        <text x="50" y="70" textAnchor="middle" fill="var(--gold)" fontSize="6.5" letterSpacing="0.5">PASSAPORTE</text>
+        <polygon points="50,20 52,26 58,26 53,30 55,36 50,32 45,36 47,30 42,26 48,26" fill="var(--gold)" opacity="0.7"/>
+      </svg>
+      <div className="carimbo-stamp" aria-hidden="true">
+        <svg viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="55" fill="rgba(34,197,94,0.12)" stroke="#22c55e" strokeWidth="3"/>
+          <circle cx="60" cy="60" r="48" fill="none" stroke="#22c55e" strokeWidth="1" strokeDasharray="3 2"/>
+          <text x="60" y="48" textAnchor="middle" fill="#22c55e" fontSize="11" fontWeight="900" letterSpacing="1">APROVADO</text>
+          <text x="60" y="64" textAnchor="middle" fill="#22c55e" fontSize="8.5" fontWeight="600">USA · CAN</text>
+          <text x="60" y="78" textAnchor="middle" fill="#22c55e" fontSize="8" fontWeight="500">COPA 2026</text>
+        </svg>
+      </div>
+      <div className="carimbo-lines" aria-hidden="true">
+        {[40, 52, 64, 76].map((y, i) => (
+          <div key={i} className="carimbo-line" style={{top: y + '%', animationDelay: `${i * 0.1}s`}}></div>
+        ))}
+      </div>
+    </div>
+    <div className="carimbo-label">Passaporte brasileiro</div>
+  </div>
+);
+
 // ─── Seção dedicada de assessoria de VISTO (landing page) ────────
 const VisaSection = () => {
   const msg = "Olá! Quero saber mais sobre a assessoria de visto pra Copa 2026.";
@@ -496,12 +528,9 @@ const VisaSection = () => {
       <div className="visa-bg-glow" aria-hidden="true"></div>
       <div className="wrap">
         <div className="visa-wrap">
-          {/* Coluna esquerda — decoração visual */}
+          {/* Coluna esquerda — animação carimbo */}
           <Reveal as="div" className="visa-passport">
-            <div className="visa-video-wrap">
-              <div className="visa-video-overlay" aria-hidden="true"></div>
-              <div className="visa-video-glow" aria-hidden="true"></div>
-            </div>
+            <CarimboAnimacao />
           </Reveal>
 
           {/* Coluna direita — conteúdo */}
@@ -577,6 +606,15 @@ const Footer = ({ brand }) => {
 
   return (
   <footer>
+    <div className="footer-video-bg" aria-hidden="true">
+      <VideoBackground
+        src="fans-loop"
+        poster="fans-loop-poster.jpg"
+        eager={false}
+        overlay={0}
+      />
+      <div className="footer-video-overlay"></div>
+    </div>
     <div className="wrap">
       <div className="foot-grid">
         <div className="foot-brand">
@@ -592,7 +630,8 @@ const Footer = ({ brand }) => {
           <h4>Navegue</h4>
           <ul>
             <li><a href="#/pacotes">Pacotes</a></li>
-            <li><a href="#/monte-seu-pacote">Monte seu pacote + Visto</a></li>
+            <li><a href="#/monte-seu-pacote">Monte seu pacote</a></li>
+            <li><a href="#/visto">Assessoria de Visto</a></li>
             <li><a href="#/sobre" onClick={(e) => { e.preventDefault(); navigateTo('/sobre', 'sedes'); }}>Cidades-sede</a></li>
             <li><a href="#/sobre" onClick={(e) => { e.preventDefault(); navigateTo('/sobre', 'depoimentos'); }}>Depoimentos</a></li>
             <li><a href="#/sobre" onClick={(e) => { e.preventDefault(); navigateTo('/sobre', 'faq'); }}>FAQ</a></li>
@@ -898,4 +937,4 @@ const FabWhatsApp = () => (
   </a>
 );
 
-Object.assign(window, { Diferenciais, Pacotes, Sedes, CTAStrip, VisaSection, Footer, FabWhatsApp, Depoimentos, FAQ, ContactForm, PacoteModal, LegalModal });
+Object.assign(window, { Diferenciais, Pacotes, Sedes, CTAStrip, VisaSection, Footer, FabWhatsApp, Depoimentos, FAQ, ContactForm, PacoteModal, LegalModal, CarimboAnimacao });

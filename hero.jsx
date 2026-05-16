@@ -50,6 +50,7 @@ const HeroNav = ({ brand }) => (
     <nav className="hero-navlinks">
       <a href="#/pacotes">Pacotes</a>
       <a href="#/monte-seu-pacote">Monte seu pacote</a>
+      <a href="#/visto">Visto</a>
       <a href="#/sobre">Sobre</a>
     </nav>
     <a href={waLink("Olá! Quero saber mais sobre os pacotes da Copa 2026.")} target="_blank" rel="noopener" className="nav-cta">
