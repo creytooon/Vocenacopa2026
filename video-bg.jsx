@@ -87,11 +87,10 @@ const VideoBackground = ({
   const inView = useInViewport(wrapRef);
 
   const [isMobile, setIsMobile] = React.useState(
-    () => typeof window !== "undefined" &&
-          (window.innerWidth <= 768 || /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent))
+    () => typeof window !== "undefined" && window.innerWidth <= 480
   );
   React.useEffect(() => {
-    const fn = () => setIsMobile(window.innerWidth <= 768 || /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent));
+    const fn = () => setIsMobile(window.innerWidth <= 480);
     window.addEventListener("resize", fn);
     return () => window.removeEventListener("resize", fn);
   }, []);
