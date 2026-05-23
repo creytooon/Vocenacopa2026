@@ -1,5 +1,5 @@
 // ════════════════════════════════════════════════════════════════
-// APP · raiz + roteamento via useRoute() + painel Tweaks
+// APP · raiz + integração com painel Tweaks
 // ════════════════════════════════════════════════════════════════
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
@@ -12,6 +12,7 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "heroVariant": "main"
 }/*EDITMODE-END*/;
 
+// Variações de headline pra brincar (a linha de cima é fixa: "É HORA DE")
 const HEADLINE_VARIANTS = {
   "campo":  { label: "Entrar em campo" },
   "lá":     { label: "Estar lá" },
@@ -19,80 +20,65 @@ const HEADLINE_VARIANTS = {
   "vestir": { label: "Vestir a camisa" }
 };
 
-// fallback: garante acesso ao hook de rota independente da ordem de carregamento
-const useRoute = window.useRoute || function useRoute() {
-  function _hp(h) { if (!h||h==='#'||h==='#/') return '/'; return h.startsWith('#/')?h.slice(1):'/'; }
-  const [path, setPath] = React.useState(() => _hp(window.location.hash));
-  React.useEffect(() => {
-    const handler = () => setPath(_hp(window.location.hash));
-    window.addEventListener('hashchange', handler);
-    return () => window.removeEventListener('hashchange', handler);
-  }, []);
-  return path;
-};
-
 function App() {
   const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
   const [highlightMedia, setHighlightMedia] = React.useState(false);
+  // Admin abre automaticamente quando carregado via paineladmin.html
+  // (essa página define window.__VNC_ADMIN_MODE antes do app montar).
   const [adminOpen, setAdminOpen] = React.useState(() => !!window.__VNC_ADMIN_MODE);
-  const [authed, setAuthed] = React.useState(() =>
-    typeof isLoggedIn === "function" ? isLoggedIn() : false
-  );
 
-  const path = useRoute();
-
+  // Aplica a cor de acento (dourado) via CSS custom property
   React.useEffect(() => {
     document.documentElement.style.setProperty("--gold", t.accent);
   }, [t.accent]);
 
+  // Toggles globais para esconder elementos via data-attrs no body
   React.useEffect(() => {
     document.body.dataset.countdown = t.showCountdown ? "on" : "off";
     document.body.dataset.hostFilters = t.showHostFilters ? "on" : "off";
   }, [t.showCountdown, t.showHostFilters]);
 
+  // Aplica modo "destacar slots de mídia" no body
   React.useEffect(() => {
     document.body.dataset.mediaHighlight = highlightMedia ? "on" : "off";
   }, [highlightMedia]);
 
-  const subline = `A maior Copa da história te espera. Ingressos garantidos, hotéis premium e atendimento humano no WhatsApp.`;
+  const subline = `Pacotes premium pra Copa do Mundo 2026 — voos, hotéis 5★, ingressos e atendimento humano pelo WhatsApp. Parcele em até ${t.installments}× sem juros.`;
+
   const headline2 = HEADLINE_VARIANTS[t.headline2Variant]?.label || "Entrar em campo";
-
-  if (window.__VNC_ADMIN_MODE && !authed) {
-    return <AdminLogin onSuccess={() => setAuthed(true)} />;
-  }
-
-  const pageProps = {
-    brand: t.brand,
-    headline2,
-    subline,
-    installments: t.installments,
-    heroVariant: t.heroVariant
-  };
-
-  const renderPage = () => {
-    if (path.startsWith('/monte-seu-pacote')) return <MonteSeuPacotePage key="monte"   {...pageProps} />;
-    if (path.startsWith('/pacotes'))          return <PacotesPage         key="pacotes" {...pageProps} />;
-    if (path.startsWith('/visto'))            return <VistoPage            key="visto"  {...pageProps} />;
-    if (path.startsWith('/sobre'))            return <SobrePage            key="sobre"  {...pageProps} />;
-    return <HomePage key="home" {...pageProps} />;
-  };
 
   return (
     <>
       <div className="app-bg" aria-hidden="true"></div>
-      <GlobalVideoBackground />
 
-      {renderPage()}
+      <Hero
+        brand={t.brand}
+        subline={subline}
+        headline2={headline2}
+        installments={t.installments}
+        heroVariant={t.heroVariant}
+      />
+
+      <Diferenciais />
+      <Pacotes installments={t.installments} />
+      <Depoimentos />
+      <Builder brand={t.brand} />
+      <VisaSection />
+      <Sedes />
+      <FAQ />
+      <CTAStrip brand={t.brand} installments={t.installments} />
+      <Footer brand={t.brand} />
 
       <FabWhatsApp />
       <PacoteModal />
       <LegalModal />
-
       {adminOpen && typeof AdminPanel !== "undefined" && (
         <AdminPanel
           tweaks={t}
           setTweak={setTweak}
           onClose={() => {
+            // Se chegou aqui via /paineladmin.html, voltar pra home;
+            // senão, só fecha o modal (uso pontual via console).
             if (window.__VNC_ADMIN_MODE) {
               window.location.href = "index.html";
             } else {

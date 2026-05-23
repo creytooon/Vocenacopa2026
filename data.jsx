@@ -5,7 +5,7 @@
 
 // Número do WhatsApp da agência (formato internacional, só dígitos).
 // Pode ser sobrescrito via painel admin (campo empresa.whatsapp).
-const WHATSAPP_NUMBER = "551151992968";
+const WHATSAPP_NUMBER = "5511999999999";
 
 // Helper que monta o link do WhatsApp com mensagem pré-preenchida.
 // Usa o número configurado no admin (fallback pro WHATSAPP_NUMBER).
@@ -97,6 +97,7 @@ const BASE_PACOTES = [
     selecao: "MEX",
     matchHighlight: "México x África do Sul · 11/jun",
     vagas: 24,
+    imagem: null,
     inclusos: [
       "Voo direto GRU→MEX (econômica)",
       "Hotel 4★ Reforma · 3 noites",
@@ -117,6 +118,7 @@ const BASE_PACOTES = [
     selecao: "BRA",
     matchHighlight: "3 jogos do Brasil · Marrocos, Haiti, Escócia",
     vagas: 18,
+    imagem: null,
     inclusos: [
       "Voo executivo GRU→JFK",
       "Hotéis 4★ em 3 cidades · 13 noites",
@@ -137,6 +139,7 @@ const BASE_PACOTES = [
     selecao: "ARG",
     matchHighlight: "3 jogos da Argentina (Argélia, Áustria, Jordânia)",
     vagas: 22,
+    imagem: null,
     inclusos: [
       "Voo direto GRU→DFW",
       "Hotéis 4★ em 3 cidades",
@@ -157,6 +160,7 @@ const BASE_PACOTES = [
     selecao: "BRA",
     matchHighlight: "Oitavas · 05/jul · MetLife Stadium",
     vagas: 12,
+    imagem: null,
     inclusos: [
       "Voo executivo GRU→JFK",
       "Hotel 5★ Times Square · 4 noites",
@@ -177,6 +181,7 @@ const BASE_PACOTES = [
     selecao: "MULTI",
     matchHighlight: "5 jogos · 3 países · 1 Copa",
     vagas: 8,
+    imagem: null,
     inclusos: [
       "3 voos executivos entre países",
       "Hotéis 5★ em 5 cidades",
@@ -197,6 +202,7 @@ const BASE_PACOTES = [
     selecao: "FINAL",
     matchHighlight: "FINAL · 19/jul · 16h · MetLife Stadium",
     vagas: 6,
+    imagem: null,
     inclusos: [
       "Voo executivo GRU→JFK",
       "Hotel 5★ Manhattan · 4 noites",
@@ -213,57 +219,24 @@ const BASE_PACOTES = [
 //   "w"  = ocupa 2 colunas (importante)
 //   "h"  = ocupa 2 linhas (destaque vertical)
 //   ""   = 1 coluna x 1 linha (padrão)
-// `image` é a URL da foto icônica (Unsplash, uso comercial livre).
-// Pode ser sobrescrita pelo painel admin via slot `sede-N`.
+// Imagem padrão pode ser trocada pelo painel admin via slot id `sede-N`.
 const SEDES = [
-  { city: "Nova York / NJ",      stadium: "MetLife Stadium",       country: "usa", span: "xl",
-    image: "https://images.unsplash.com/photo-1496588152823-86ff7695e68f?w=1600&q=80",
-    note: "Sede da GRANDE FINAL · 19/jul · MetLife" },
-  { city: "Cidade do México",    stadium: "Estádio Azteca",        country: "mex", span: "w",
-    image: "https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?w=1200&q=80",
-    note: "Jogo de Abertura · 11/jun · Azteca" },
-  { city: "Los Angeles",         stadium: "SoFi Stadium",          country: "usa", span: "h",
-    image: "https://images.unsplash.com/photo-1444723121867-7a241cacace9?w=900&q=80",
-    note: "Sede de Semifinal · Inglewood" },
-  { city: "Miami",               stadium: "Hard Rock Stadium",     country: "usa", span: "w",
-    image: "https://images.unsplash.com/photo-1535498730771-e735b998cd64?w=1200&q=80",
-    note: "Disputa de 3º lugar · 18/jul" },
-  { city: "Dallas",              stadium: "AT&T Stadium",          country: "usa", span: "h",
-    image: "https://images.unsplash.com/photo-1545194445-dddb8f4487c6?w=900&q=80",
-    note: "Sede de Semifinal · 14/jul" },
-  { city: "Toronto",             stadium: "BMO Field",             country: "can", span: "",
-    image: "https://images.unsplash.com/photo-1517090504586-fde19ea6066f?w=900&q=80",
-    note: "Sede do Canadá · 1ª rodada" },
-  { city: "Atlanta",             stadium: "Mercedes-Benz Stadium", country: "usa", span: "",
-    image: "assets/cidades/atlanta.jpg",
-    note: "Sede de Semifinal · 15/jul" },
-  { city: "Vancouver",           stadium: "BC Place",              country: "can", span: "",
-    image: "https://images.unsplash.com/photo-1559511260-66a654ae982a?w=900&q=80",
-    note: "Cobertura retrátil · Pacífico" },
-  { city: "Guadalajara",         stadium: "Estádio Akron",         country: "mex", span: "",
-    image: "assets/cidades/guadalajara.jpg",
-    note: "Vibe local mexicana autêntica" },
-  { city: "Monterrey",           stadium: "Estádio BBVA",          country: "mex", span: "",
-    image: "assets/cidades/monterrey.jpg",
-    note: "Norte do México · Cerro de la Silla" },
-  { city: "Kansas City",         stadium: "Arrowhead Stadium",     country: "usa", span: "",
-    image: "assets/cidades/kansascity.jpg",
-    note: "Argentina x Argélia · estreia 🇦🇷" },
-  { city: "Filadélfia",          stadium: "Lincoln Financial",     country: "usa", span: "",
-    image: "https://images.unsplash.com/photo-1569761316261-9a8696fa2ca3?w=900&q=80",
-    note: "Sede de Brasil x Haiti · 19/jun" },
-  { city: "Boston",              stadium: "Gillette Stadium",      country: "usa", span: "",
-    image: "https://images.unsplash.com/photo-1501979376754-2ff867a4f659?w=900&q=80",
-    note: "Foxborough · Costa Leste" },
-  { city: "Seattle",             stadium: "Lumen Field",           country: "usa", span: "",
-    image: "https://images.unsplash.com/photo-1438401171849-74ac270044ee?w=900&q=80",
-    note: "Pacífico Noroeste · Lumen" },
-  { city: "Houston",             stadium: "NRG Stadium",           country: "usa", span: "",
-    image: "assets/cidades/houston.jpg",
-    note: "Sede de Alemanha x Curaçao" },
-  { city: "San Francisco",       stadium: "Levi's Stadium",        country: "usa", span: "",
-    image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=900&q=80",
-    note: "Santa Clara · Silicon Valley" }
+  { city: "Nova York / NJ",      stadium: "MetLife Stadium",       country: "usa", span: "xl", note: "Sede da GRANDE FINAL · 19/jul · MetLife" },
+  { city: "Cidade do México",    stadium: "Estádio Azteca",        country: "mex", span: "w",  note: "Jogo de Abertura · 11/jun · Azteca" },
+  { city: "Los Angeles",         stadium: "SoFi Stadium",          country: "usa", span: "h",  note: "Sede de Semifinal · Inglewood" },
+  { city: "Miami",               stadium: "Hard Rock Stadium",     country: "usa", span: "w",  note: "Disputa de 3º lugar · 18/jul" },
+  { city: "Dallas",              stadium: "AT&T Stadium",          country: "usa", span: "h",  note: "Sede de Semifinal · 14/jul" },
+  { city: "Toronto",             stadium: "BMO Field",             country: "can", span: "",   note: "Sede do Canadá · 1ª rodada" },
+  { city: "Atlanta",             stadium: "Mercedes-Benz Stadium", country: "usa", span: "",   note: "Sede de Semifinal · 15/jul" },
+  { city: "Vancouver",           stadium: "BC Place",              country: "can", span: "",   note: "Cobertura retrátil · Pacífico" },
+  { city: "Guadalajara",         stadium: "Estádio Akron",         country: "mex", span: "",   note: "Vibe local mexicana autêntica" },
+  { city: "Monterrey",           stadium: "Estádio BBVA",          country: "mex", span: "",   note: "Norte do México · Cerro de la Silla" },
+  { city: "Kansas City",         stadium: "Arrowhead Stadium",     country: "usa", span: "",   note: "Argentina x Argélia · estreia 🇦🇷" },
+  { city: "Filadélfia",          stadium: "Lincoln Financial",     country: "usa", span: "",   note: "Sede de Brasil x Haiti · 19/jun" },
+  { city: "Boston",              stadium: "Gillette Stadium",      country: "usa", span: "",   note: "Foxborough · Costa Leste" },
+  { city: "Seattle",             stadium: "Lumen Field",           country: "usa", span: "",   note: "Pacífico Noroeste · Lumen" },
+  { city: "Houston",             stadium: "NRG Stadium",           country: "usa", span: "",   note: "Sede de Alemanha x Curaçao" },
+  { city: "San Francisco",       stadium: "Levi's Stadium",        country: "usa", span: "",   note: "Santa Clara · Silicon Valley" }
 ];
 
 // Formata preço em BRL — "R$ 84.900"
@@ -1001,8 +974,8 @@ const DEFAULT_SITE_CONFIG = {
     razaoSocial: "",
     cnpj: "",
     cadastur: "",
-    telefone: "+55 11 5199-2968",
-    whatsapp: "551151992968", // só dígitos, formato internacional
+    telefone: "+55 11 99999-9999",
+    whatsapp: "5511999999999", // só dígitos, formato internacional
     email: "contato@vocenacopa.com.br",
     instagram: "@vocenacopa",
     instagramUrl: "https://instagram.com/vocenacopa",
@@ -1064,21 +1037,6 @@ const DEFAULT_SITE_CONFIG = {
     // Passageiros
     pessoaMult: { adulto: 1.0, crianca: 0.75, bebe: 0.10 }
   },
-  // ─── Autenticação Admin ────────────────────────────────────────
-  // Hash SHA-256 da senha. NÃO é criptografia forte — é "trava de porta".
-  // Senha inicial: "admin123" → hash abaixo. Cliente troca no 1º acesso.
-  auth: {
-    username: "admin",
-    passwordHash: "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9", // SHA-256("admin123")
-    sessionDurationHours: 8
-  },
-
-  // ─── Deploy / Integração ──────────────────────────────────────
-  deploy: {
-    vercelDeployHook: "",  // URL secreta do Vercel Deploy Hook
-    lastDeployAt: null
-  },
-
   // ─── Páginas legais (rich text) ────────────────────────────────
   paginas: {
     politicaPrivacidade: "Edite este texto no painel admin. Aqui vai a política de privacidade da sua agência conforme LGPD.",
@@ -1088,15 +1046,15 @@ const DEFAULT_SITE_CONFIG = {
   // ─── FAQ ───────────────────────────────────────────────────────
   faq: [
     { q: "Os ingressos da Copa já estão garantidos?",
-      r: "Sim. Trabalhamos com revendedores credenciados pela FIFA (FIFA Hospitality, On Location). Ingresso confirmado após pagamento da entrada." },
+      r: "Trabalhamos com revendedores credenciados pela FIFA (FIFA Hospitality, On Location). Os ingressos são confirmados após o pagamento da entrada do pacote." },
     { q: "Preciso de visto americano para a Copa 2026?",
-      r: "Sim, para os EUA (B1/B2). A gente cuida do processo. México não precisa; Canadá só uma autorização eletrônica." },
+      r: "Sim, brasileiros precisam de visto de turismo (B1/B2) para os EUA. Apoiamos no processo de aplicação. Para México e Canadá, o brasileiro precisa apenas de autorização eletrônica." },
     { q: "Posso cancelar o pacote?",
-      r: "Sim. Cancelamentos com +60 dias de antecedência devolvem até 80% do valor pago. Detalhes nos Termos & Condições." },
+      r: "Sim, conforme nossa política de cancelamento. Cancelamentos com mais de 60 dias têm devolução de até 80% do valor pago. Detalhes nos Termos & Condições." },
     { q: "O pacote inclui seguro viagem?",
-      r: "Sim, todos incluem seguro internacional com cobertura mínima de USD 100.000." },
+      r: "Sim, todos os pacotes incluem seguro viagem internacional com cobertura mínima de USD 100.000." },
     { q: "Como funciona o parcelamento?",
-      r: "Até 18× sem juros no cartão, ou Pix com 5% de desconto." }
+      r: "Parcelamos em até 18× sem juros no cartão de crédito, ou via Pix com 5% de desconto adicional." }
   ],
   // ─── Depoimentos ────────────────────────────────────────────────
   depoimentos: [
@@ -1209,141 +1167,6 @@ function estimatePackagePrice({
     pessoas: { adults, children, babies, total: adults + children + babies }
   };
 }
-
-// ════════════════════════════════════════════════════════════════
-// AUTENTICAÇÃO ADMIN
-// ────────────────────────────────────────────────────────────────
-// SHA-256 client-side é "trava de porta" — afasta o curioso, NÃO
-// é segurança forte. Em produção: combinar com Vercel Password
-// Protection (https://vercel.com/docs/security/password-protection).
-// ════════════════════════════════════════════════════════════════
-
-// Hash SHA-256 usando Web Crypto API (built-in nos navegadores)
-async function sha256(text) {
-  const buf = new TextEncoder().encode(text);
-  const hashBuf = await crypto.subtle.digest("SHA-256", buf);
-  const arr = Array.from(new Uint8Array(hashBuf));
-  return arr.map(b => b.toString(16).padStart(2, "0")).join("");
-}
-
-// Verifica se a senha bate com o hash salvo
-async function checkPassword(password) {
-  const cfg = getSiteConfig();
-  const expected = cfg.auth?.passwordHash || "";
-  if (!expected) return false;
-  const got = await sha256(password);
-  return got === expected;
-}
-
-// Atualiza usuário e/ou senha (salva hash, NUNCA senha em texto puro)
-async function updateAuth({ username, newPassword }) {
-  const cfg = getSiteConfig();
-  if (!cfg.auth) cfg.auth = {};
-  if (username) cfg.auth.username = username;
-  if (newPassword) {
-    cfg.auth.passwordHash = await sha256(newPassword);
-  }
-  return saveSiteConfig(cfg);
-}
-
-// Sessão de login (sessionStorage = some quando fecha aba)
-const SESSION_KEY = "vnc:admin:session";
-
-function isLoggedIn() {
-  try {
-    const raw = sessionStorage.getItem(SESSION_KEY);
-    if (!raw) return false;
-    const s = JSON.parse(raw);
-    const cfg = getSiteConfig();
-    const dur = (cfg.auth?.sessionDurationHours || 8) * 3600 * 1000;
-    if (Date.now() - s.t > dur) {
-      sessionStorage.removeItem(SESSION_KEY);
-      return false;
-    }
-    return s.user === cfg.auth?.username;
-  } catch { return false; }
-}
-
-function loginSession(username) {
-  try {
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ user: username, t: Date.now() }));
-    return true;
-  } catch { return false; }
-}
-
-function logoutSession() {
-  try {
-    sessionStorage.removeItem(SESSION_KEY);
-    return true;
-  } catch { return false; }
-}
-
-// ════════════════════════════════════════════════════════════════
-// DEPLOY / EXPORT
-// ════════════════════════════════════════════════════════════════
-
-// Exporta TODA a configuração do site como JSON pra download
-function exportSiteData() {
-  const data = {
-    version: 1,
-    exportedAt: new Date().toISOString(),
-    siteConfig: getSiteConfig(),
-    // adicionar outros stores se quiser (jogos editados, pacotes editados, etc)
-    adminPacotes: (() => { try { return JSON.parse(localStorage.getItem("vnc:adm:pacotes") || "null"); } catch { return null; } })(),
-    adminJogos:   (() => { try { return JSON.parse(localStorage.getItem("vnc:adm:jogos") || "null"); } catch { return null; } })(),
-    adminHoteis:  (() => { try { return JSON.parse(localStorage.getItem("vnc:adm:hoteis") || "null"); } catch { return null; } })(),
-    mediaSlots:   (() => { try { return JSON.parse(localStorage.getItem("vnc:media:v1") || "null"); } catch { return null; } })()
-  };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  const stamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
-  a.download = `pacotes-copa-config-${stamp}.json`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  return true;
-}
-
-// Importa do JSON
-function importSiteData(jsonText) {
-  try {
-    const data = JSON.parse(jsonText);
-    if (data.siteConfig)    saveSiteConfig(data.siteConfig);
-    if (data.adminPacotes)  localStorage.setItem("vnc:adm:pacotes", JSON.stringify(data.adminPacotes));
-    if (data.adminJogos)    localStorage.setItem("vnc:adm:jogos",   JSON.stringify(data.adminJogos));
-    if (data.adminHoteis)   localStorage.setItem("vnc:adm:hoteis",  JSON.stringify(data.adminHoteis));
-    if (data.mediaSlots)    localStorage.setItem("vnc:media:v1",    JSON.stringify(data.mediaSlots));
-    return true;
-  } catch (e) {
-    console.error("Erro ao importar:", e);
-    return false;
-  }
-}
-
-// Dispara Vercel Deploy Hook (URL secreta cadastrada no admin)
-async function triggerVercelDeploy() {
-  const cfg = getSiteConfig();
-  const url = cfg.deploy?.vercelDeployHook;
-  if (!url || !/^https:\/\/api\.vercel\.com\//.test(url)) {
-    throw new Error("URL do Deploy Hook inválida. Configure em Admin → Deploy.");
-  }
-  const res = await fetch(url, { method: "POST" });
-  if (!res.ok) throw new Error(`Vercel respondeu ${res.status}`);
-  // Atualiza timestamp
-  cfg.deploy.lastDeployAt = new Date().toISOString();
-  saveSiteConfig(cfg);
-  if (typeof gtag === "function") gtag("event", "deploy_triggered");
-  return await res.json().catch(() => ({}));
-}
-
-Object.assign(window, {
-  sha256, checkPassword, updateAuth,
-  isLoggedIn, loginSession, logoutSession,
-  exportSiteData, importSiteData, triggerVercelDeploy
-});
 
 Object.assign(window, {
   DEFAULT_SITE_CONFIG, getSiteConfig, saveSiteConfig,

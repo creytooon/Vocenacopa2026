@@ -56,6 +56,65 @@ const ToggleIn = ({ value, onChange, label }) => (
 
 const flagForPais = (p) => p === "USA" ? "🇺🇸" : p === "MEX" ? "🇲🇽" : p === "CAN" ? "🇨🇦" : "🏳️";
 
+// ─── Gerenciador de imagem por pacote ─────────────────────────
+// Armazena em p.imagem (data URL) via updatePackage — sai pelo
+// Exportar JSON e viaja com o deploy, sem depender de image-slot.
+async function _resizePkgImg(file, maxPx) {
+  maxPx = maxPx || 900;
+  const bmp = await createImageBitmap(file);
+  const scale = Math.min(1, maxPx / Math.max(bmp.width, bmp.height));
+  const w = Math.round(bmp.width * scale);
+  const h = Math.round(bmp.height * scale);
+  const canvas = document.createElement("canvas");
+  canvas.width = w; canvas.height = h;
+  canvas.getContext("2d").drawImage(bmp, 0, 0, w, h);
+  bmp.close && bmp.close();
+  return canvas.toDataURL("image/webp", 0.85);
+}
+
+function PkgImageManager({ pkgId, imagem }) {
+  const inputRef = React.useRef(null);
+
+  const handleFile = (e) => {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    e.target.value = "";
+    _resizePkgImg(f).then(function(dataUrl) {
+      updatePackage(pkgId, { imagem: dataUrl });
+    });
+  };
+
+  const clear = () => updatePackage(pkgId, { imagem: null });
+
+  return (
+    <div className="adm-pkg-img-mgr">
+      {imagem && (
+        <div className="adm-pkg-img-thumb">
+          <img src={imagem} alt="Preview do card" />
+        </div>
+      )}
+      <div className="adm-pkg-img-actions">
+        {imagem ? (
+          <>
+            <span className="adm-pkg-img-ok">✓ Imagem carregada</span>
+            <button className="adm-btn ghost sm" type="button"
+                    onClick={() => inputRef.current && inputRef.current.click()}>Trocar</button>
+            <button className="adm-btn danger sm" type="button" onClick={clear}>Remover</button>
+          </>
+        ) : (
+          <>
+            <span className="adm-pkg-img-none">Sem imagem — usando ilustração</span>
+            <button className="adm-btn sm" type="button"
+                    onClick={() => inputRef.current && inputRef.current.click()}>+ Adicionar foto</button>
+          </>
+        )}
+      </div>
+      <input ref={inputRef} type="file" accept="image/png,image/jpeg,image/webp" hidden onChange={handleFile} />
+      <span className="adm-field-hint">PNG · JPG · WebP · redimensionado automaticamente. Sai pelo Exportar JSON.</span>
+    </div>
+  );
+}
+
 // ─── Tab: Pacotes ─────────────────────────────────────────────
 function AdminPacotes() {
   useDataVersion();
@@ -158,6 +217,11 @@ function PkgEditor({ p, expanded, onToggle }) {
               <Field label="Texto do selo"><TextIn value={p.tagText} onChange={(v) => set({ tagText: v })} /></Field>
             </FieldGroup>
           )}
+          <FieldGroup columns={1}>
+            <Field label="Foto do card">
+              <PkgImageManager pkgId={p.id} imagem={p.imagem} />
+            </Field>
+          </FieldGroup>
           <FieldGroup columns={2}>
             {[0,1,2,3].map((i) => (
               <Field key={i} label={`Incluso #${i+1}`}>
@@ -826,346 +890,6 @@ function AdminEstimativa() {
   );
 }
 
-// ─── Aba FOTOS DAS CIDADES ──────────────────────────────────────
-// Permite trocar a URL ou fazer upload de cada foto de cidade.
-function AdminCidadesImg() {
-  // Salvamos overrides em localStorage separado dos sites_config
-  const [overrides, setOverrides] = React.useState(() => {
-    try { return JSON.parse(localStorage.getItem("vnc:sede-images") || "{}"); }
-    catch { return {}; }
-  });
-
-  const update = (cityKey, url) => {
-    const next = { ...overrides, [cityKey]: url };
-    setOverrides(next);
-    try {
-      localStorage.setItem("vnc:sede-images", JSON.stringify(next));
-      window.dispatchEvent(new CustomEvent("sede-images-change", { detail: next }));
-    } catch {}
-  };
-
-  const remove = (cityKey) => {
-    const next = { ...overrides };
-    delete next[cityKey];
-    setOverrides(next);
-    try {
-      localStorage.setItem("vnc:sede-images", JSON.stringify(next));
-      window.dispatchEvent(new CustomEvent("sede-images-change", { detail: next }));
-    } catch {}
-  };
-
-  // Upload de arquivo local → vira base64
-  const onUpload = (cityKey) => (ev) => {
-    const file = ev.target.files?.[0];
-    if (!file) return;
-    if (file.size > 2 * 1024 * 1024) {
-      alert("Arquivo muito grande. Máximo 2 MB. Comprima em tinyjpg.com");
-      return;
-    }
-    const r = new FileReader();
-    r.onload = () => update(cityKey, r.result);
-    r.readAsDataURL(file);
-    ev.target.value = "";
-  };
-
-  return (
-    <div className="adm-content">
-      <div className="adm-section-h">Fotos das 16 Cidades-Sede</div>
-      <p className="adm-section-sub">
-        Configure foto pra cada cidade. Pode colar URL externa OU fazer upload de arquivo do seu computador.
-        Cidades sem foto configurada usam o fallback elegante (gradiente com o nome).
-      </p>
-
-      <div className="adm-info-box" style={{marginTop:12}}>
-        💡 <b>Dica</b>: pra cidades sem foto, baixe fotos no Unsplash/Pexels (uso comercial livre) e faça upload aqui.
-        Sugestão de buscas: "Atlanta skyline", "Monterrey Cerro de la Silla", "Kansas City Missouri", "Houston Texas skyline", "Guadalajara cathedral".
-      </div>
-
-      <div className="adm-cidades-grid">
-        {SEDES.map((s, i) => {
-          const cityKey = `sede-${i}`;
-          const currentUrl = overrides[cityKey] || s.image || "";
-          const isCustom = !!overrides[cityKey];
-          return (
-            <div key={cityKey} className="adm-cidade-card">
-              <div className="adm-cidade-preview">
-                {currentUrl
-                  ? <img src={currentUrl} alt={s.city}
-                         onError={(e) => { e.target.style.display = "none"; }} />
-                  : <div className="adm-cidade-empty">(sem foto · usa fallback)</div>}
-                <div className={`adm-cidade-flag ${s.country}`}></div>
-              </div>
-              <div className="adm-cidade-info">
-                <h4>{s.city}</h4>
-                <p>{s.stadium}</p>
-                {isCustom && <span className="adm-pill-custom">Customizada</span>}
-              </div>
-              <div className="adm-cidade-actions">
-                <Field label="URL da imagem">
-                  <TextIn
-                    value={(overrides[cityKey] && !overrides[cityKey].startsWith("data:")) ? overrides[cityKey] : (s.image || "")}
-                    onChange={(v) => v ? update(cityKey, v) : remove(cityKey)}
-                    placeholder="https://..."
-                  />
-                </Field>
-                <div style={{display:"flex", gap:8, marginTop:8, flexWrap:"wrap"}}>
-                  <label className="adm-btn ghost" style={{cursor:"pointer", margin:0}}>
-                    📤 Upload
-                    <input type="file" accept="image/*" style={{display:"none"}}
-                           onChange={onUpload(cityKey)} />
-                  </label>
-                  {isCustom && (
-                    <button className="adm-btn danger sm" onClick={() => remove(cityKey)}>
-                      ↺ Restaurar padrão
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-// ─── Aba SEGURANÇA (login & senha) ─────────────────────────────
-function AdminSeguranca({ onLogout }) {
-  const [cfg, update] = useSiteConfig();
-  const [newUsername, setNewUsername] = React.useState(cfg.auth?.username || "admin");
-  const [newPassword, setNewPassword] = React.useState("");
-  const [confirmPassword, setConfirmPassword] = React.useState("");
-  const [msg, setMsg] = React.useState({ type: "", text: "" });
-  const [showPwd, setShowPwd] = React.useState(false);
-
-  const save = async () => {
-    setMsg({ type: "", text: "" });
-    if (!newUsername.trim()) {
-      setMsg({ type: "error", text: "Usuário não pode ficar vazio." });
-      return;
-    }
-    if (newPassword && newPassword.length < 6) {
-      setMsg({ type: "error", text: "Senha precisa de pelo menos 6 caracteres." });
-      return;
-    }
-    if (newPassword && newPassword !== confirmPassword) {
-      setMsg({ type: "error", text: "Confirmação de senha não bate." });
-      return;
-    }
-    try {
-      await updateAuth({
-        username: newUsername.trim(),
-        newPassword: newPassword || undefined
-      });
-      setMsg({ type: "success", text: "Credenciais atualizadas! Próximo login usa os novos dados." });
-      setNewPassword("");
-      setConfirmPassword("");
-    } catch (e) {
-      setMsg({ type: "error", text: "Erro ao salvar. Tente de novo." });
-    }
-  };
-
-  const doLogout = () => {
-    if (confirm("Sair do painel admin?")) {
-      logoutSession();
-      // recarrega pra voltar pra tela de login
-      window.location.reload();
-    }
-  };
-
-  return (
-    <div className="adm-content">
-      <div className="adm-section-h">🔐 Login &amp; Senha do Admin</div>
-      <p className="adm-section-sub">
-        Esses dados protegem o acesso ao painel. <b>Recomendado trocar a senha padrão imediatamente.</b>
-      </p>
-
-      <div className="adm-info-box" style={{background:"rgba(234,179,8,0.08)", borderColor:"rgba(234,179,8,0.3)"}}>
-        ⚠️ <b>Aviso de segurança:</b> esse login funciona via JavaScript no navegador.
-        É uma "trava de porta" — afasta o curioso, mas <b>não é proteção militar</b>.
-        Pra segurança real em produção, ative <b>Vercel Password Protection</b> (Settings → Deployment Protection → Password Protection)
-        ou <b>Cloudflare Access</b>. Combinado com o login daqui, fica robusto.
-      </div>
-
-      <Field label="Usuário">
-        <TextIn value={newUsername} onChange={setNewUsername} placeholder="admin" />
-      </Field>
-
-      <Field label="Nova senha" hint="Deixe em branco pra manter a atual. Mínimo 6 caracteres.">
-        <div style={{position:"relative"}}>
-          <input
-            type={showPwd ? "text" : "password"}
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            className="adm-input"
-            placeholder="••••••••"
-            autoComplete="new-password"
-          />
-          <button type="button"
-            onClick={() => setShowPwd(s => !s)}
-            style={{
-              position:"absolute", right:8, top:"50%", transform:"translateY(-50%)",
-              background:"none", border:"none", color:"#888", cursor:"pointer", fontSize:18
-            }}>
-            {showPwd ? "🙈" : "👁"}
-          </button>
-        </div>
-      </Field>
-
-      {newPassword && (
-        <Field label="Confirmar nova senha">
-          <input
-            type={showPwd ? "text" : "password"}
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className="adm-input"
-            placeholder="••••••••"
-          />
-        </Field>
-      )}
-
-      {msg.text && (
-        <div className={`adm-msg ${msg.type === "success" ? "ok" : "err"}`}>
-          {msg.text}
-        </div>
-      )}
-
-      <div style={{display:"flex", gap:10, marginTop:20, flexWrap:"wrap"}}>
-        <button className="adm-btn primary" onClick={save}>
-          Salvar credenciais
-        </button>
-        <button className="adm-btn danger" onClick={doLogout}>
-          🚪 Sair do painel
-        </button>
-      </div>
-
-      <div className="adm-section-h" style={{marginTop:32}}>Duração da Sessão</div>
-      <Field label="Horas até expirar o login automaticamente" hint="Sessão expira quando o navegador fecha OU quando esse tempo passa, o que vier primeiro.">
-        <NumIn
-          value={cfg.auth?.sessionDurationHours || 8}
-          onChange={(v) => update("auth.sessionDurationHours", v)}
-          min={1} step={1}
-        />
-      </Field>
-    </div>
-  );
-}
-
-// ─── Aba DEPLOY (publicar mudanças) ────────────────────────────
-function AdminDeploy() {
-  const [cfg, update] = useSiteConfig();
-  const [hook, setHook] = React.useState(cfg.deploy?.vercelDeployHook || "");
-  const [deploying, setDeploying] = React.useState(false);
-  const [msg, setMsg] = React.useState({ type: "", text: "" });
-
-  const saveHook = () => {
-    update("deploy.vercelDeployHook", hook.trim());
-    setMsg({ type: "success", text: "Deploy Hook salvo!" });
-    setTimeout(() => setMsg({ type: "", text: "" }), 3000);
-  };
-
-  const deploy = async () => {
-    if (!hook.trim()) {
-      setMsg({ type: "error", text: "Configure a URL do Deploy Hook primeiro." });
-      return;
-    }
-    setDeploying(true);
-    setMsg({ type: "", text: "" });
-    try {
-      await triggerVercelDeploy();
-      setMsg({ type: "success", text: "✅ Deploy disparado! Aguarde ~2min e atualize o site público." });
-    } catch (e) {
-      setMsg({ type: "error", text: "❌ Erro: " + e.message });
-    } finally {
-      setDeploying(false);
-    }
-  };
-
-  const onImport = (ev) => {
-    const f = ev.target.files?.[0];
-    if (!f) return;
-    const r = new FileReader();
-    r.onload = () => {
-      if (importSiteData(r.result)) {
-        setMsg({ type: "success", text: "Configurações importadas! Recarregue a página." });
-      } else {
-        setMsg({ type: "error", text: "Erro ao importar. Arquivo inválido." });
-      }
-    };
-    r.readAsText(f);
-    ev.target.value = "";
-  };
-
-  return (
-    <div className="adm-content">
-      <div className="adm-section-h">💾 Backup &amp; Exportação</div>
-      <p className="adm-section-sub">
-        Salve TODAS as suas configurações em um arquivo JSON. Use pra backup ou pra transferir entre máquinas.
-      </p>
-      <div style={{display:"flex", gap:10, flexWrap:"wrap", marginTop:14}}>
-        <button className="adm-btn primary" onClick={exportSiteData}>
-          📥 Exportar configurações (JSON)
-        </button>
-        <label className="adm-btn ghost" style={{cursor:"pointer", margin:0}}>
-          📤 Importar JSON
-          <input type="file" accept="application/json" style={{display:"none"}} onChange={onImport} />
-        </label>
-      </div>
-
-      <div className="adm-section-h" style={{marginTop:40}}>🚀 Publicar na Vercel</div>
-      <p className="adm-section-sub">
-        Dispara um redeploy automático do seu site na Vercel via <b>Deploy Hook</b>.
-      </p>
-
-      <div className="adm-info-box" style={{marginTop:12}}>
-        <b>Como obter o Deploy Hook URL:</b>
-        <ol style={{margin:"8px 0 0 18px", paddingLeft:0}}>
-          <li>Acesse seu projeto na <a href="https://vercel.com" target="_blank" rel="noopener" style={{color:"var(--gold)"}}>vercel.com</a></li>
-          <li>Vá em <code>Settings → Git → Deploy Hooks</code></li>
-          <li>Crie um hook (nome: "Admin Panel", branch: "main")</li>
-          <li>Copie a URL gerada (começa com <code>https://api.vercel.com/...</code>)</li>
-          <li>Cole abaixo</li>
-        </ol>
-      </div>
-
-      <Field label="URL do Vercel Deploy Hook" hint="Mantenha esta URL secreta — qualquer um com ela dispara deploys.">
-        <TextIn value={hook} onChange={setHook} placeholder="https://api.vercel.com/v1/integrations/deploy/..." />
-      </Field>
-
-      <div style={{display:"flex", gap:10, marginTop:12, flexWrap:"wrap"}}>
-        <button className="adm-btn" onClick={saveHook}>Salvar URL</button>
-        <button className="adm-btn primary" onClick={deploy} disabled={deploying || !hook.trim()}>
-          {deploying ? "⏳ Publicando..." : "🚀 Publicar mudanças agora"}
-        </button>
-      </div>
-
-      {cfg.deploy?.lastDeployAt && (
-        <p style={{marginTop:14, fontSize:12, color:"var(--ink-dim)"}}>
-          Último deploy: {new Date(cfg.deploy.lastDeployAt).toLocaleString("pt-BR")}
-        </p>
-      )}
-
-      {msg.text && (
-        <div className={`adm-msg ${msg.type === "success" ? "ok" : "err"}`} style={{marginTop:16}}>
-          {msg.text}
-        </div>
-      )}
-
-      <div className="adm-info-box" style={{marginTop:32, background:"rgba(234,179,8,0.08)", borderColor:"rgba(234,179,8,0.3)"}}>
-        ⚠️ <b>Importante:</b> o Deploy Hook só rebuilda o site com os arquivos que estão no Git.
-        <b>As edições que você faz no admin (texto, fotos, preços) ficam só no SEU navegador</b> (localStorage).
-        Pra elas aparecerem pro mundo, você precisa:
-        <ol style={{margin:"8px 0 0 18px"}}>
-          <li>Exportar JSON acima</li>
-          <li>Subir o arquivo no seu repositório (Git)</li>
-          <li>Configurar o site pra ler dele</li>
-        </ol>
-        Por enquanto, as edições funcionam só pra você ver no seu navegador.
-      </div>
-    </div>
-  );
-}
-
 function AdminPanel({ onClose, tweaks, setTweak }) {
   const [tab, setTab] = React.useState("pacotes");
   // Re-render quando registry de mídia muda (pra atualizar contador da aba Imagens)
@@ -1195,13 +919,10 @@ function AdminPanel({ onClose, tweaks, setTweak }) {
     { id: "jogos",      label: "Jogos",           icon: "calendar", count: MATCHES.length },
     { id: "hoteis",     label: "Hotéis",          icon: "hotel",    count: Object.keys(HOTELS).length * 9 },
     { id: "imagens",    label: "Imagens",         icon: "sparkles", count: MEDIA_REGISTRY.length },
-    { id: "cidades",    label: "Fotos cidades",   icon: "map-pin",  count: SEDES.length },
     { id: "empresa",    label: "Empresa",         icon: "shield" },
     { id: "seo",        label: "SEO & Analytics", icon: "map-pin" },
     { id: "conteudo",   label: "FAQ & Depoimentos", icon: "mail" },
     { id: "estimativa", label: "Preços",          icon: "sparkles" },
-    { id: "seguranca",  label: "🔐 Segurança",     icon: "shield" },
-    { id: "deploy",     label: "🚀 Deploy",        icon: "sparkles" },
     { id: "marca",      label: "Marca & visual",  icon: "shield" }
   ];
 
@@ -1254,13 +975,10 @@ function AdminPanel({ onClose, tweaks, setTweak }) {
           {tab === "jogos"      && <AdminJogos />}
           {tab === "hoteis"     && <AdminHoteis />}
           {tab === "imagens"    && <AdminImagens />}
-          {tab === "cidades"    && <AdminCidadesImg />}
           {tab === "empresa"    && <AdminEmpresa />}
           {tab === "seo"        && <AdminSEO />}
           {tab === "conteudo"   && <AdminConteudo />}
           {tab === "estimativa" && <AdminEstimativa />}
-          {tab === "seguranca"  && <AdminSeguranca onLogout={onClose} />}
-          {tab === "deploy"     && <AdminDeploy />}
           {tab === "marca"      && <AdminMarca tweaks={tweaks} setTweak={setTweak} />}
         </main>
       </div>

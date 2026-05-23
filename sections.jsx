@@ -5,12 +5,12 @@
 // ─── DIFERENCIAIS ────────────────────────────────────────────────
 const Diferenciais = () => {
   const items = [
-    { num: "01 / Premium",   icon: "trophy",   title: "Premium ponta a ponta",
-      body: "Hotéis 5★, transfers privativos e ingressos categoria 1 e 2." },
-    { num: "02 / Especialistas", icon: "shield", title: "Especialistas em Copas",
-      body: "12 anos montando pacotes pra Copas e Olimpíadas. PT, EN, ES." },
-    { num: "03 / Suporte 24/7",  icon: "headphones", title: "Concierge 24/7",
-      body: "WhatsApp dedicado durante toda a viagem. Resposta em segundos." }
+    { num: "01 / Premium",   icon: "trophy",   title: "Experiência premium do começo ao fim",
+      body: "Hotéis 5★, transfers privativos, ingressos categoria 1 e 2 e acesso a hospitalidades exclusivas em todas as cidades-sede." },
+    { num: "02 / Especialistas", icon: "shield", title: "Equipe especializada em grandes eventos",
+      body: "Mais de 12 anos montando pacotes para Copas, Olimpíadas e Champions. Falamos português, inglês e espanhol — e conhecemos cada estádio." },
+    { num: "03 / Suporte 24/7",  icon: "headphones", title: "Concierge no seu bolso, 24h por dia",
+      body: "Um WhatsApp dedicado durante toda a viagem. Voo atrasado, mudança de jogo, qualquer emergência — alguém atende em segundos." }
   ];
   return (
     <section id="diferenciais">
@@ -18,7 +18,7 @@ const Diferenciais = () => {
         <Reveal as="div" className="section-head">
           <span className="eyebrow"><span className="dot"></span>Por que viajar conosco</span>
           <h2>O jogo<br/><span className="gold-grad">começa antes</span></h2>
-          <p className="lede">Estar lá não é só comprar ingresso. A diferença está nos detalhes — e a gente cuida de cada um.</p>
+          <p className="lede">A diferença entre estar lá e viver a Copa está nos detalhes que ninguém vê — e que a gente trata um por um.</p>
         </Reveal>
         <div className="diff-grid">
           {items.map((it, i) => (
@@ -231,13 +231,16 @@ const PacoteCard = ({ p, delay, installments }) => {
     <Reveal delay={delay} className="pkg-card">
       <div className="pkg-media">
         <div className="img">
-          <PkgPlaceholder
-            country={p.pais}
-            city={p.cidadeSede}
-            seedKey={p.id}
-            slotId={`pkg-${p.id}`}
-            slotLabel={p.titulo}
-          />
+          {p.imagem
+            ? <img src={p.imagem} alt={p.titulo} className="pkg-img-custom" />
+            : <PkgPlaceholder
+                country={p.pais}
+                city={p.cidadeSede}
+                seedKey={p.id}
+                slotId={`pkg-${p.id}`}
+                slotLabel={p.titulo}
+              />
+          }
         </div>
         <div className="pkg-media-overlay"></div>
         {p.tag && (
@@ -286,37 +289,6 @@ const PacoteCard = ({ p, delay, installments }) => {
             <div className="install">
               ou <b>{installments}× de {fmtBRL(Math.round(p.preco / installments))}</b> sem juros
             </div>
-            <div className="pkg-cards-accepted">
-              <div className="pkg-card-flag pkg-card-flag-visa" aria-label="Visa">
-                <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                  <text x="100" y="62" fontFamily="Arial Black, sans-serif" fontStyle="italic" fontWeight="900" fontSize="60" fill="#1A1F71" textAnchor="middle" letterSpacing="-2">VISA</text>
-                </svg>
-              </div>
-              <div className="pkg-card-flag pkg-card-flag-master" aria-label="Mastercard">
-                <svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="38" cy="30" r="22" fill="#EB001B"/>
-                  <circle cx="62" cy="30" r="22" fill="#F79E1B"/>
-                  <path d="M 50 11.6 A 22 22 0 0 1 50 48.4 A 22 22 0 0 0 50 11.6 Z" fill="#FF5F00"/>
-                </svg>
-              </div>
-              <div className="pkg-card-flag pkg-card-flag-amex" aria-label="American Express">
-                <svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg">
-                  <rect width="100" height="60" fill="#006FCF"/>
-                  <text x="50" y="26" fontFamily="Arial Black, sans-serif" fontWeight="900" fontSize="13" fill="white" textAnchor="middle">AMERICAN</text>
-                  <text x="50" y="45" fontFamily="Arial Black, sans-serif" fontWeight="900" fontSize="13" fill="white" textAnchor="middle">EXPRESS</text>
-                </svg>
-              </div>
-              <div className="pkg-card-flag pkg-card-flag-pix" aria-label="Pix">
-                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                  <g fill="#32BCAD">
-                    <path d="M 50 8 L 27 31 L 50 46 L 73 31 Z"/>
-                    <path d="M 92 50 L 69 27 L 54 50 L 69 73 Z"/>
-                    <path d="M 50 92 L 73 69 L 50 54 L 27 69 Z"/>
-                    <path d="M 8 50 L 31 73 L 46 50 L 31 27 Z"/>
-                  </g>
-                </svg>
-              </div>
-            </div>
           </div>
           <button className="btn-wa-pkg" onClick={onSolicitar} type="button">
             <Icon name="whatsapp" size={14} />
@@ -355,10 +327,10 @@ const Pacotes = ({ installments = 18 }) => {
     <section id="pacotes" className="pacotes-section">
       <div className="wrap">
         <Reveal as="div" className="section-head">
-          <span className="eyebrow"><span className="dot"></span>6 roteiros · Preço de lançamento</span>
+          <span className="eyebrow"><span className="dot"></span>Pacotes 2026 · 6 roteiros · Preços promocionais</span>
           <h2>Escolha o seu<br/><span className="gold-grad">pacote</span></h2>
           <p className="lede">
-            <b style={{color:"var(--ink)"}}>Seis roteiros, dos grupos à final.</b> Preço promocional de lançamento. Personalize no WhatsApp.
+            <b style={{color:"var(--ink)"}}>Vamos buscar o Hexa!</b> 🇧🇷 Seis pacotes principais selecionados pela nossa equipe, dos grupos à grande final — todos por <b style={{color:"var(--gold)"}}>preço promocional de lançamento</b>. Personalize com a gente pelo WhatsApp.
           </p>
         </Reveal>
 
@@ -397,59 +369,32 @@ const Pacotes = ({ installments = 18 }) => {
 
 // ─── GALERIA SEDES ──────────────────────────────────────────────
 const Sedes = () => {
-  // Lê overrides de imagens do admin (vnc:sede-images)
-  const [imgOverrides, setImgOverrides] = React.useState(() => {
-    try { return JSON.parse(localStorage.getItem("vnc:sede-images") || "{}"); }
-    catch { return {}; }
-  });
-  React.useEffect(() => {
-    const fn = (e) => setImgOverrides(e.detail || {});
-    window.addEventListener("sede-images-change", fn);
-    return () => window.removeEventListener("sede-images-change", fn);
-  }, []);
-
   return (
     <section id="sedes" className="sedes-section">
+      <VideoBackground
+        src="hero-bg-alt"
+        poster="hero-bg-alt-poster.jpg"
+        loopFadeMs={500}
+        eager={false}
+        overlay={0.82}
+        className="sedes-video-bg"
+      />
       <div className="wrap">
         <Reveal as="div" className="section-head">
           <span className="eyebrow"><span className="dot"></span>16 cidades-sede</span>
           <h2>Três países,<br/><span className="gold-grad">um campeonato</span></h2>
-          <p className="lede">A maior Copa da história — 16 cidades, 3 países.</p>
+          <p className="lede">A maior edição da história. Da Costa Leste americana ao Pacífico, passando pelo coração do México e atravessando as Rochosas canadenses.</p>
         </Reveal>
 
         <div className="sedes-grid">
           {SEDES.map((s, i) => {
             const sid = `sede-${i}`;
-            const spanClass =
-              s.span === "xl" ? "span-xl" :
-              s.span === "w"  ? "span-w"  :
-              s.span === "h"  ? "span-h"  : "";
-            // Prioridade: override do admin > URL no data > nada (fallback)
-            const finalImage = imgOverrides[sid] || s.image;
             return (
               <Reveal key={s.city} delay={(i % 4) * 80}
-                className={`sede ${spanClass}`}>
-                {/* Foto icônica da cidade (fundo).
-                    Ordem: override admin → URL data.jsx → fallback */}
+                className={`sede ${s.span === "h" ? "span-h" : ""} ${s.span === "w" ? "span-w" : ""}`}>
                 <div className={`sede-img ${s.country}`}>
-                  {finalImage && (
-                    <img
-                      src={finalImage}
-                      alt={`${s.city} · ${s.stadium}`}
-                      loading="lazy"
-                      onError={(ev) => {
-                        // Esconde a img — o fallback CSS aparece
-                        ev.target.style.display = "none";
-                        ev.target.parentElement.classList.add("img-failed");
-                      }}
-                    />
-                  )}
-                  {/* Fallback visual (gradiente colorido + nome da cidade gigante) */}
-                  <div className="sede-img-fallback" aria-hidden="true">
-                    <div className="fallback-label">{s.city}</div>
-                  </div>
+                  <span className="placeholder-label">[ foto · {s.city.toLowerCase()} ]</span>
                 </div>
-                {/* Slot do admin (sobrescreve a foto se cliente subir uma) */}
                 <MediaSlot
                   id={sid}
                   label={s.city}
@@ -458,17 +403,11 @@ const Sedes = () => {
                   placeholder={s.city}
                   className="sede-slot"
                 />
-                {/* Gradiente escuro pra legibilidade do texto */}
                 <div className="sede-overlay"></div>
-                {/* Tag colorida no canto (USA/MEX/CAN) */}
                 <span className={`sede-flagdot ${s.country}`}></span>
-                {/* Conteúdo (nome cidade + estádio + nota) */}
                 <div className="sede-content">
                   <div className="sede-city">{s.city}</div>
                   <div className="sede-stadium">{s.stadium}</div>
-                  {s.note && (s.span === "xl" || s.span === "w") && (
-                    <div className="sede-note">{s.note}</div>
-                  )}
                 </div>
               </Reveal>
             );
@@ -484,15 +423,24 @@ const CTAStrip = ({ brand, installments = 18 }) => {
   const msg = "Olá! Quero montar um roteiro personalizado para a Copa 2026.";
   return (
     <section className="cta-strip" id="contato">
+      <VideoBackground
+        src="fans-loop"
+        poster="fans-loop-poster.jpg"
+        loopFadeMs={500}
+        eager={false}
+        overlay={0.72}
+        className="cta-video-bg"
+      />
       <div className="wrap cta-inner">
         <Reveal>
           <span className="eyebrow"><span className="dot"></span>Roteiro sob medida</span>
           <h2 style={{marginTop: 14}}>Não encontrou<br/>o pacote <em>ideal</em>?</h2>
-          <p className="lede">Algo fora do padrão? Manda no WhatsApp — proposta em 3h, em até <b style={{color:"var(--gold)"}}>{installments}× sem juros</b>.</p>
+          <p className="lede">Montamos roteiros 100% personalizados — combinando jogos, cidades, hotéis e experiências exatamente como você imaginou. Em até 48 horas você recebe sua proposta, com pagamento em até <b style={{color:"var(--gold)"}}>{installments}× sem juros</b>.</p>
           <div style={{marginTop: 28, display:"flex", gap: 12, flexWrap:"wrap"}}>
             <a href={waLink(msg)} target="_blank" rel="noopener" className="btn btn-wa">
               <Icon name="whatsapp" size={20}/> Falar com um especialista
             </a>
+            <a href="#pacotes" className="btn btn-outline">Voltar aos pacotes</a>
           </div>
         </Reveal>
 
@@ -509,47 +457,18 @@ const CTAStrip = ({ brand, installments = 18 }) => {
             <div className="qr">
               <div className="qr-box" aria-hidden="true"></div>
               <div className="qr-hint">
-                Aponte a câmera ou toque no botão acima. Sem formulário, sem espera.
+                Aponte a câmera ou <b>toque no botão</b> para abrir uma conversa direta com nosso time. Sem formulário, sem espera.
               </div>
             </div>
+            <a href={waLink(msg)} target="_blank" rel="noopener" className="btn btn-wa">
+              <Icon name="whatsapp" size={18}/> Abrir WhatsApp
+            </a>
           </div>
         </Reveal>
       </div>
     </section>
   );
 };
-
-// ─── CARIMBO · animação passaporte BR sendo carimbado ────────────
-const CarimboAnimacao = () => (
-  <div className="carimbo-wrap">
-    <div className="carimbo-passaporte">
-      <svg viewBox="0 0 100 100" className="carimbo-brasao" aria-hidden="true">
-        <circle cx="50" cy="50" r="40" fill="none" stroke="var(--gold)" strokeWidth="2"/>
-        <circle cx="50" cy="50" r="33" fill="none" stroke="var(--gold)" strokeWidth="0.8" strokeDasharray="4 3"/>
-        <text x="50" y="36" textAnchor="middle" fill="var(--gold)" fontSize="7.5" fontWeight="700" letterSpacing="1">REPÚBLICA</text>
-        <text x="50" y="46" textAnchor="middle" fill="var(--gold)" fontSize="7.5" fontWeight="700" letterSpacing="1">FEDERATIVA</text>
-        <text x="50" y="58" textAnchor="middle" fill="var(--gold)" fontSize="12" fontWeight="900">BRASIL</text>
-        <text x="50" y="70" textAnchor="middle" fill="var(--gold)" fontSize="6.5" letterSpacing="0.5">PASSAPORTE</text>
-        <polygon points="50,20 52,26 58,26 53,30 55,36 50,32 45,36 47,30 42,26 48,26" fill="var(--gold)" opacity="0.7"/>
-      </svg>
-      <div className="carimbo-stamp" aria-hidden="true">
-        <svg viewBox="0 0 120 120">
-          <circle cx="60" cy="60" r="55" fill="rgba(34,197,94,0.12)" stroke="#22c55e" strokeWidth="3"/>
-          <circle cx="60" cy="60" r="48" fill="none" stroke="#22c55e" strokeWidth="1" strokeDasharray="3 2"/>
-          <text x="60" y="48" textAnchor="middle" fill="#22c55e" fontSize="11" fontWeight="900" letterSpacing="1">APROVADO</text>
-          <text x="60" y="64" textAnchor="middle" fill="#22c55e" fontSize="8.5" fontWeight="600">USA · CAN</text>
-          <text x="60" y="78" textAnchor="middle" fill="#22c55e" fontSize="8" fontWeight="500">COPA 2026</text>
-        </svg>
-      </div>
-      <div className="carimbo-lines" aria-hidden="true">
-        {[40, 52, 64, 76].map((y, i) => (
-          <div key={i} className="carimbo-line" style={{top: y + '%', animationDelay: `${i * 0.1}s`}}></div>
-        ))}
-      </div>
-    </div>
-    <div className="carimbo-label">Passaporte brasileiro</div>
-  </div>
-);
 
 // ─── Seção dedicada de assessoria de VISTO (landing page) ────────
 const VisaSection = () => {
@@ -559,9 +478,39 @@ const VisaSection = () => {
       <div className="visa-bg-glow" aria-hidden="true"></div>
       <div className="wrap">
         <div className="visa-wrap">
-          {/* Coluna esquerda — animação carimbo */}
+          {/* Coluna esquerda — passaporte + selos */}
           <Reveal as="div" className="visa-passport">
-            <CarimboAnimacao />
+            <div className="passport-stack">
+              <div className="passport passport-back">
+                <FlagSVG country="CAN" size={24} className="pp-flag" />
+                <span className="pp-label">PASSPORT</span>
+              </div>
+              <div className="passport passport-mid">
+                <FlagSVG country="USA" size={24} className="pp-flag" />
+                <span className="pp-label">PASSPORT</span>
+              </div>
+              <div className="passport passport-front">
+                <div className="passport-cover">
+                  <FlagSVG country="BRA" size={56} className="pp-crest" />
+                  <div className="pp-rep">REPÚBLICA FEDERATIVA</div>
+                  <div className="pp-rep-2">DO BRASIL</div>
+                  <div className="pp-title">PASSAPORTE</div>
+                </div>
+                <div className="passport-stamp pp-stamp-1">
+                  <div className="ps-ring">
+                    <div className="ps-text">USA · APPROVED</div>
+                    <div className="ps-inner">✓</div>
+                  </div>
+                </div>
+                <div className="passport-stamp pp-stamp-2">
+                  <div className="ps-ring ps-green">
+                    <div className="ps-text">CANADA · OK</div>
+                    <div className="ps-inner">✓</div>
+                  </div>
+                </div>
+                <span className="pp-ticket" aria-hidden="true">🎟️</span>
+              </div>
+            </div>
           </Reveal>
 
           {/* Coluna direita — conteúdo */}
@@ -577,7 +526,7 @@ const VisaSection = () => {
 
             <Reveal delay={120}>
               <p className="visa-lede">
-                <b>EUA</b> <FlagSVG country="USA" size={13} className="flag-inline"/> e <b>Canadá</b> <FlagSVG country="CAN" size={13} className="flag-inline"/> pedem visto. A gente resolve tudo — você só vai à entrevista.
+                Pra entrar nos <b>EUA</b> <FlagSVG country="USA" size={13} className="flag-inline"/> ou <b>Canadá</b> <FlagSVG country="CAN" size={13} className="flag-inline"/> você precisa de visto válido. Mas isso <b>não é problema seu</b> — nosso time cuida de todo o processo, do zero ao deferimento.
               </p>
             </Reveal>
 
@@ -637,20 +586,11 @@ const Footer = ({ brand }) => {
 
   return (
   <footer>
-    <div className="footer-video-bg" aria-hidden="true">
-      <VideoBackground
-        src="fans-loop"
-        poster="fans-loop-poster.jpg"
-        eager={false}
-        overlay={0}
-      />
-      <div className="footer-video-overlay"></div>
-    </div>
     <div className="wrap">
       <div className="foot-grid">
         <div className="foot-brand">
           <div className="h-display gold-grad" style={{fontSize: 56}}>{brand}</div>
-          <p>Pacotes premium pra Copa 2026. Atendimento humano e suporte 24/7.</p>
+          <p>Vitrine de pacotes premium para a Copa do Mundo 2026. Atendimento humano, curadoria honesta e suporte 24/7 durante toda a sua viagem.</p>
           <div className="foot-seals">
             {e.cadastur && <span className="seal-pill">CADASTUR {e.cadastur}</span>}
             {cfg.selos?.abavMembro && <span className="seal-pill">Membro ABAV</span>}
@@ -660,12 +600,11 @@ const Footer = ({ brand }) => {
         <div className="foot-col">
           <h4>Navegue</h4>
           <ul>
-            <li><a href="#/pacotes">Pacotes</a></li>
-            <li><a href="#/monte-seu-pacote">Monte seu pacote</a></li>
-            <li><a href="#/visto">Assessoria de Visto</a></li>
-            <li><a href="#/sobre" onClick={(e) => { e.preventDefault(); navigateTo('/sobre', 'sedes'); }}>Cidades-sede</a></li>
-            <li><a href="#/sobre" onClick={(e) => { e.preventDefault(); navigateTo('/sobre', 'depoimentos'); }}>Depoimentos</a></li>
-            <li><a href="#/sobre" onClick={(e) => { e.preventDefault(); navigateTo('/sobre', 'faq'); }}>FAQ</a></li>
+            <li><a href="#pacotes">Pacotes</a></li>
+            <li><a href="#sedes">Cidades-sede</a></li>
+            <li><a href="#depoimentos">Depoimentos</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#contato">Roteiro sob medida</a></li>
           </ul>
         </div>
         <div className="foot-col">
@@ -689,7 +628,7 @@ const Footer = ({ brand }) => {
       </div>
 
       <div className="foot-disclaimer">
-        <b>Aviso:</b> Não somos afiliados à FIFA. Ingressos via parceiros credenciados. Preços e disponibilidade sujeitos a alteração até a contratação.
+        <b>Aviso importante:</b> Não somos revendedores oficiais nem temos qualquer vínculo com a FIFA. Nossos pacotes incluem hospedagem, voos, transfers e experiências locais; os ingressos são adquiridos por meio de parceiros credenciados e revendedores autorizados. Disponibilidade, preços e itinerários estão sujeitos a alteração até o fechamento do contrato.
       </div>
 
       <div className="foot-bottom">
@@ -718,7 +657,7 @@ const Depoimentos = () => {
         <Reveal as="div" className="section-head">
           <span className="eyebrow"><span className="dot"></span>Quem viajou conosco</span>
           <h2>O que dizem<br/><span className="gold-grad">nossos viajantes</span></h2>
-          <p className="lede"><b style={{color:"var(--gold)"}}>+1.200 viajantes</b> em Rússia 2018 e Catar 2022.</p>
+          <p className="lede">Histórias reais de quem confiou em nós para Copas anteriores. <b style={{color:"var(--gold)"}}>+ de 1.200 clientes atendidos</b> em Rússia 2018 e Catar 2022.</p>
         </Reveal>
         <div className="depo-grid">
           {depos.map((d, i) => (
@@ -968,4 +907,4 @@ const FabWhatsApp = () => (
   </a>
 );
 
-Object.assign(window, { Diferenciais, Pacotes, Sedes, CTAStrip, VisaSection, Footer, FabWhatsApp, Depoimentos, FAQ, ContactForm, PacoteModal, LegalModal, CarimboAnimacao });
+Object.assign(window, { Diferenciais, Pacotes, Sedes, CTAStrip, VisaSection, Footer, FabWhatsApp, Depoimentos, FAQ, ContactForm, PacoteModal, LegalModal });

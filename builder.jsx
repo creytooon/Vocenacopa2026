@@ -338,15 +338,6 @@ const CartDrawer = ({ cart, hotel, setHotel, hotelChoices, setHotelChoices,
                     const opts = HOTELS[c.id]?.[hotel] || [];
                     const key = `${c.id}-${hotel}`;
                     const idx = hotelChoices[key] ?? 0;
-                    // Calcula preço por noite pra cada hotel desta cidade
-                    const cfg = (typeof getSiteConfig === "function") ? getSiteConfig() : null;
-                    const est = cfg?.estimativa;
-                    const tierStars = HOTEL_TIERS.find(h => h.id === hotel)?.stars || 4;
-                    const baseUSD = est?.hotelBase?.[c.id]?.[tierStars] ?? 200;
-                    const cotacao = est?.cotacaoUSD ?? 5.30;
-                    const copaMul = est?.copaMultiplier ?? 1.6;
-                    // Preço base por noite em BRL, considerando alta temporada Copa
-                    const basePriceBRL = Math.round(baseUSD * copaMul * cotacao);
                     return (
                       <div key={c.id} className="city-hotel">
                         <div className="ch-city">
@@ -354,25 +345,17 @@ const CartDrawer = ({ cart, hotel, setHotel, hotelChoices, setHotelChoices,
                           {c.city}
                         </div>
                         <div className="ch-options">
-                          {opts.map((opt, i) => {
-                            // Cada hotel pode ter um pequeno ajuste de preço (i=0 base, i=1 +10%, i=2 -8%)
-                            const adjust = [1.0, 1.12, 0.92][i] ?? 1.0;
-                            const priceNight = Math.round(basePriceBRL * adjust / 50) * 50;
-                            return (
-                              <button key={i}
-                                className={`ch-opt ${i === idx ? "picked" : ""}`}
-                                onClick={() => setHotelChoices({ ...hotelChoices, [key]: i })}>
-                                <span className="ch-radio"></span>
-                                <div className="ch-info">
-                                  <div className="ch-name">{opt.name}</div>
-                                  <div className="ch-area">{opt.area} · <span className="ch-note">{opt.note}</span></div>
-                                  <div className="ch-price">
-                                    A partir de <b>{fmtBRL(priceNight)}</b> / noite
-                                  </div>
-                                </div>
-                              </button>
-                            );
-                          })}
+                          {opts.map((opt, i) => (
+                            <button key={i}
+                              className={`ch-opt ${i === idx ? "picked" : ""}`}
+                              onClick={() => setHotelChoices({ ...hotelChoices, [key]: i })}>
+                              <span className="ch-radio"></span>
+                              <div className="ch-info">
+                                <div className="ch-name">{opt.name}</div>
+                                <div className="ch-area">{opt.area} · <span className="ch-note">{opt.note}</span></div>
+                              </div>
+                            </button>
+                          ))}
                         </div>
                       </div>
                     );
@@ -499,7 +482,7 @@ const Builder = ({ brand }) => {
   const cart = useCart();
   const [country, setCountry] = React.useState("all");
   const [stage, setStage]     = React.useState("all");
-  const [show, setShow]       = React.useState("brazil");  // Inicia em "Jogos do Brasil" (3 jogos)
+  const [show, setShow]       = React.useState("feat");  // Inicia em "Principais jogos"
   const [hotel, setHotel]     = React.useState(4);
   const [tripOption, setTripOption] = React.useState(() => {
     try { return localStorage.getItem("vnc:trip-opt") || "segura"; } catch { return "segura"; }
@@ -626,32 +609,6 @@ const Builder = ({ brand }) => {
                     </div>
                   : <MatchRow key={g.m.id} m={g.m} picked={cart.has(g.m.id)} onToggle={cart.toggle} />
               )}
-
-              {/* Dica: mostra quantos jogos extras estão disponíveis e atalho rápido */}
-              {(show === "brazil" || show === "feat") && filtered.length < MATCHES.length && (
-                <div className="show-more-hint">
-                  <div className="smh-text">
-                    Mostrando <b>{filtered.length}</b> {show === "brazil" ? "jogos do Brasil" : "principais jogos"}.
-                    <br/>
-                    <span className="smh-sub">
-                      Existem <b>{MATCHES.length - filtered.length}</b> outros jogos disponíveis (oitavas, quartas, semis, abertura, final…).
-                    </span>
-                  </div>
-                  <div className="smh-actions">
-                    {show !== "feat" && (
-                      <button className="smh-btn"
-                              onClick={() => setShow("feat")}>
-                        ⭐ Ver principais ({MATCHES.filter(m => m.isFeatured).length})
-                      </button>
-                    )}
-                    <button className="smh-btn smh-btn-primary"
-                            onClick={() => setShow("all")}>
-                      Ver todos os {MATCHES.length} jogos →
-                    </button>
-                  </div>
-                </div>
-              )}
-
               {filtered.length > maxVisible && (
                 <button className="load-more"
                   onClick={() => setMaxVisible((n) => n + 30)}>
