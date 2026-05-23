@@ -43,16 +43,15 @@ const Countdown = () => {
 
 const HeroNav = ({ brand }) => (
   <header className="hero-nav">
-    <a href="#top" className="brand-mark">
+    <AppLink to="/" className="brand-mark">
       <span className="brand-badge">26</span>
       <span>{brand}</span>
-    </a>
+    </AppLink>
     <nav className="hero-navlinks">
-      <a href="#pacotes">Pacotes</a>
-      <a href="#monte">Monte seu pacote</a>
-      <a href="#visto">Visto</a>
-      <a href="#sedes">Sedes</a>
-      <a href="#contato">Contato</a>
+      <AppLink to="/pacotes">Pacotes</AppLink>
+      <AppLink to="/monte-seu-pacote">Monte seu pacote</AppLink>
+      <AppLink to="/visto">Visto</AppLink>
+      <AppLink to="/sobre">Sobre</AppLink>
     </nav>
     <a href={waLink("Olá! Quero saber mais sobre os pacotes da Copa 2026.")} target="_blank" rel="noopener" className="nav-cta">
       <span style={{width:6,height:6,borderRadius:"50%",background:"var(--gold)",boxShadow:"0 0 8px var(--gold)"}}></span>
@@ -154,10 +153,10 @@ const Hero = ({ brand, headline2, subline, installments, heroVariant = "main" })
 
         <Reveal delay={400}>
           <div className="hero-ctas">
-            <a href="#pacotes" className="btn btn-gold">
+            <AppLink to="/pacotes" className="btn btn-gold">
               Ver pacotes
               <Icon name="arrow-right" size={18} />
-            </a>
+            </AppLink>
             <a href={waLink("Olá! Quero falar com um especialista sobre a Copa 2026.")} target="_blank" rel="noopener" className="btn btn-outline">
               <Icon name="whatsapp" size={18} />
               Falar no WhatsApp
@@ -170,7 +169,8 @@ const Hero = ({ brand, headline2, subline, installments, heroVariant = "main" })
         </Reveal>
       </div>
 
-      <a href="#diferenciais" className="scroll-ind" aria-label="Rolar para a próxima seção">
+      <a href="#pacotes-destaque" className="scroll-ind" aria-label="Rolar para a próxima seção"
+         onClick={(e) => { e.preventDefault(); document.getElementById('pacotes-destaque')?.scrollIntoView({ behavior: 'smooth' }); }}>
         Role para descobrir
         <span className="line"></span>
       </a>
