@@ -1,5 +1,5 @@
 // ════════════════════════════════════════════════════════════════
-// APP · raiz + integração com painel Tweaks
+// APP · raiz + roteamento via useRoute() + painel Tweaks
 // ════════════════════════════════════════════════════════════════
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
@@ -23,9 +23,12 @@ const HEADLINE_VARIANTS = {
 function App() {
   const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
   const [highlightMedia, setHighlightMedia] = React.useState(false);
-  // Admin abre automaticamente quando carregado via paineladmin.html
-  // (essa página define window.__VNC_ADMIN_MODE antes do app montar).
   const [adminOpen, setAdminOpen] = React.useState(() => !!window.__VNC_ADMIN_MODE);
+  const [authed, setAuthed] = React.useState(() =>
+    typeof isLoggedIn === "function" ? isLoggedIn() : false
+  );
+
+  const path = useRoute();
 
   // Aplica a cor de acento (dourado) via CSS custom property
   React.useEffect(() => {
@@ -44,41 +47,44 @@ function App() {
   }, [highlightMedia]);
 
   const subline = `Pacotes premium pra Copa do Mundo 2026 — voos, hotéis 5★, ingressos e atendimento humano pelo WhatsApp. Parcele em até ${t.installments}× sem juros.`;
-
   const headline2 = HEADLINE_VARIANTS[t.headline2Variant]?.label || "Entrar em campo";
+
+  if (window.__VNC_ADMIN_MODE && !authed) {
+    return <AdminLogin onSuccess={() => setAuthed(true)} />;
+  }
+
+  const pageProps = {
+    brand: t.brand,
+    headline2,
+    subline,
+    installments: t.installments,
+    heroVariant: t.heroVariant
+  };
+
+  const renderPage = () => {
+    if (path.startsWith('/monte-seu-pacote')) return <MonteSeuPacotePage key="monte"   {...pageProps} />;
+    if (path.startsWith('/pacotes'))          return <PacotesPage         key="pacotes" {...pageProps} />;
+    if (path.startsWith('/visto'))            return <VistoPage            key="visto"   {...pageProps} />;
+    if (path.startsWith('/sobre'))            return <SobrePage            key="sobre"   {...pageProps} />;
+    return <HomePage key="home" {...pageProps} />;
+  };
 
   return (
     <>
       <div className="app-bg" aria-hidden="true"></div>
+      <GlobalVideoBackground />
 
-      <Hero
-        brand={t.brand}
-        subline={subline}
-        headline2={headline2}
-        installments={t.installments}
-        heroVariant={t.heroVariant}
-      />
-
-      <Diferenciais />
-      <Pacotes installments={t.installments} />
-      <Depoimentos />
-      <Builder brand={t.brand} />
-      <VisaSection />
-      <Sedes />
-      <FAQ />
-      <CTAStrip brand={t.brand} installments={t.installments} />
-      <Footer brand={t.brand} />
+      {renderPage()}
 
       <FabWhatsApp />
       <PacoteModal />
       <LegalModal />
+
       {adminOpen && typeof AdminPanel !== "undefined" && (
         <AdminPanel
           tweaks={t}
           setTweak={setTweak}
           onClose={() => {
-            // Se chegou aqui via /paineladmin.html, voltar pra home;
-            // senão, só fecha o modal (uso pontual via console).
             if (window.__VNC_ADMIN_MODE) {
               window.location.href = "index.html";
             } else {
