@@ -43,15 +43,15 @@ const Countdown = () => {
 
 const HeroNav = ({ brand }) => (
   <header className="hero-nav">
-    <AppLink to="/" className="brand-mark">
+    <a href="#/" className="brand-mark">
       <span className="brand-badge">26</span>
       <span>{brand}</span>
-    </AppLink>
+    </a>
     <nav className="hero-navlinks">
-      <AppLink to="/pacotes">Pacotes</AppLink>
-      <AppLink to="/monte-seu-pacote">Monte seu pacote</AppLink>
-      <AppLink to="/visto">Visto</AppLink>
-      <AppLink to="/sobre">Sobre</AppLink>
+      <a href="#/pacotes">Pacotes</a>
+      <a href="#/monte-seu-pacote">Monte seu pacote</a>
+      <a href="#/visto">Visto</a>
+      <a href="#/sobre">Sobre</a>
     </nav>
     <a href={waLink("Olá! Quero saber mais sobre os pacotes da Copa 2026.")} target="_blank" rel="noopener" className="nav-cta">
       <span style={{width:6,height:6,borderRadius:"50%",background:"var(--gold)",boxShadow:"0 0 8px var(--gold)"}}></span>
@@ -61,38 +61,10 @@ const HeroNav = ({ brand }) => (
 );
 
 const Hero = ({ brand, headline2, subline, installments, heroVariant = "main" }) => {
-  // Vídeo principal × alternativo (estádio vazio simétrico)
-  const videoSrc = heroVariant === "alt" ? "hero-bg-alt" : "hero-bg";
   return (
     <section className="hero" id="top">
+      {/* Slot do admin: imagem sobrepõe o vídeo global se configurada */}
       <div className="hero-media">
-        {/*
-          ────────────────────────────────────────────────
-          MÍDIA DO HERO — sistema em camadas:
-          1. Vídeo MP4/WebM (carrega em desktop e mobile com versões
-             próprias). Cai pra fallback se: data-saver, conexão lenta,
-             prefers-reduced-motion, ou erro de rede.
-          2. Animação SVG cinematográfica como fallback automático.
-          3. Imagem solta no slot do painel "Mídia" sobrepõe tudo.
-
-          Arquivos esperados em videos/:
-            - hero-bg.mp4         (1920×1080, ~5MB)
-            - hero-bg.webm        (mesma versão, codec VP9 ~30% menor)
-            - hero-bg_mobile.mp4  (1280×720,  <2MB)
-            - hero-bg_mobile.webm
-            - hero-bg-poster.jpg  (frame estático ~150KB)
-            (mesmas variantes para hero-bg-alt)
-          ────────────────────────────────────────────────
-        */}
-        <VideoBackground
-          src={videoSrc}
-          poster={`${videoSrc}-poster.jpg`}
-          loopFadeMs={500}
-          eager={true}
-          overlay={0.55}
-          fallback={<HeroBackground />}
-          className="hero-video-bg"
-        />
         <MediaSlot
           id="hero-bg"
           label="Imagem de fundo do hero"
@@ -153,10 +125,10 @@ const Hero = ({ brand, headline2, subline, installments, heroVariant = "main" })
 
         <Reveal delay={400}>
           <div className="hero-ctas">
-            <AppLink to="/pacotes" className="btn btn-gold">
+            <a href="#/pacotes" className="btn btn-gold">
               Ver pacotes
               <Icon name="arrow-right" size={18} />
-            </AppLink>
+            </a>
             <a href={waLink("Olá! Quero falar com um especialista sobre a Copa 2026.")} target="_blank" rel="noopener" className="btn btn-outline">
               <Icon name="whatsapp" size={18} />
               Falar no WhatsApp
